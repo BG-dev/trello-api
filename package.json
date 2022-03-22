@@ -1,0 +1,22 @@
+{
+  "name": "trello-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Nikita Azizov",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.3",
+    "helmet": "^5.0.2",
+    "joi": "^17.6.0",
+    "winston": "^3.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.11.0",
+    "nodemon": "^2.0.15"
+  }
+}
