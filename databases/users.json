@@ -1,11 +1,13 @@
 [
     {
+        "id": 1,
         "name": "Nikita",
         "login": "nik.azizoff2013",
         "password": "12002233",
         "role": "admin"
     },
     {
+        "id": 2,
         "name": "Anton",
         "login": "anton2022",
         "password": "88888888",
