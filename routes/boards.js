@@ -51,6 +51,12 @@ router.post('/', authUser, authRole('admin'), async (req, res) => {
     }  
 })
 
+router.put('/:id', authUser, authRole('admin'), async (req, res) => {
+    const id = req.params.id
+
+    await updateBoardInTrello(id)
+})
+
 router.delete('/:id', authUser, authRole('admin'), async (req, res) => {
     const id = req.params.id
     
@@ -70,9 +76,24 @@ const getDateNow = () => {
 const getBoardById = (id) => boards.find(board => board.id === id)
 
 async function createBoardInTrello(newBoard){
-    const response = await axios.post('https://api.trello.com/1/boards', {
+    const url = process.env.URL
+    const response = await axios.post(`${url}/1/boards`, {
         name: newBoard.name,
         desc: newBoard.description,
+        prefs_background: newBoard.color,
+        key: process.env.KEY,
+        token: process.env.TOKEN
+      })
+      console.log(response)
+      return response.data.id
+}
+
+async function updateBoardInTrello(newBoard){
+    const url = process.env.URL
+    const response = await axios.post(`${url}/1/boards`, {
+        name: newBoard.name,
+        desc: newBoard.description,
+        prefs_background: newBoard.color,
         key: process.env.KEY,
         token: process.env.TOKEN
       })
@@ -81,9 +102,10 @@ async function createBoardInTrello(newBoard){
 }
 
 async function deleteBoardFromTrelloById(id){
+    const url = process.env.URL
     const key = process.env.KEY
     const token = process.env.TOKEN
-    await axios.delete(`https://api.trello.com/1/boards/${id}?key=${key}&token=${token}`)
+    await axios.delete(`${url}/1/boards/${id}?key=${key}&token=${token}`)
 }
 
 module.exports = router
