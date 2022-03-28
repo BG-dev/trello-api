@@ -5,6 +5,8 @@ const boards = require('../databases/boards.json')
 const { validateBoard, validateCard } = require('../validators/boardValidator')
 const fs = require('fs');
 
+const FILE_NAME = 'boards'
+const FILE_EXTENSION = 'json'
 
 const router = express.Router()
 
@@ -28,26 +30,19 @@ router.get('/:id', authUser, (req, res) => {
 router.post('/', authUser, authRole('admin'), async (req, res) => {
     try {
         const board = req.body.board
+        if(!board)
+            throw new Error('board is undefined')
+
         const { error } = validateBoard(req.body.board)
         if(error)
-            return res.status(400).send({message: error.details[0].message})
+            throw new Error(error.details[0].message)
         
         const id = await createBoardInTrello(board)
-    
-        const boardData = {
-          id: id,
-          name: board.name,
-          desc: board.desc,
-          color: board.color,
-          createAt: getDateNow()
-        }
-        const data = JSON.stringify([...boards, boardData], null, 4)
-        fs.writeFile('./databases/boards.json', data, () => {console.log('ok')})
+        await addBoardToFile(boards, board, id, FILE_NAME, FILE_EXTENSION)
     
         res.status(200).send({message: 'Board successfully added to the database'})   
     } catch (error) {
-        console.log(error)
-        res.status(403).send({message: `Error: ${error}`})
+        res.status(400).send({message: `${error}`})
     }  
 })
 
@@ -58,13 +53,19 @@ router.put('/:id', authUser, authRole('admin'), async (req, res) => {
 })
 
 router.delete('/:id', authUser, authRole('admin'), async (req, res) => {
-    const id = req.params.id
+    try {
+        const id = req.params.id
+        if(!board)
+            throw new Error('id is undefined')
     
-    await deleteBoardFromTrelloById(id)
-
-    const data = JSON.stringify(boards.filter(board => board.id !== id), null, 4)
-    fs.writeFile('./databases/boards.json', data, () => {console.log('ok')})
-    res.status(200).send({message: 'ok!'})
+        await deleteBoardFromTrelloById(id)
+    
+        const data = JSON.stringify(boards.filter(board => board.id !== id), null, 4)
+        fs.writeFile('./databases/boards.json', data, () => {console.log('ok')})
+        res.status(200).send({message: 'ok!'})    
+    } catch (error) {
+        res.status(400).send({message: `${error}`})
+    }
 })
 
 const getDateNow = () => {
@@ -75,12 +76,28 @@ const getDateNow = () => {
 
 const getBoardById = (id) => boards.find(board => board.id === id)
 
-async function createBoardInTrello(newBoard){
+async function createBoardInTrello(board){
+    if(!board)
+        throw new Error('New board data is undefined')
+
     const url = process.env.URL
     const response = await axios.post(`${url}/1/boards`, {
-        name: newBoard.name,
-        desc: newBoard.description,
-        prefs_background: newBoard.color,
+        name: board.name,
+        desc: board.description,
+        prefs_background: board.color,
+        key: process.env.KEY,
+        token: process.env.TOKEN
+      })
+
+      return response.data.id
+}
+
+async function updateBoardInTrello(board){
+    const url = process.env.URL
+    const response = await axios.post(`${url}/1/boards`, {
+        name: board.name,
+        desc: board.description,
+        prefs_background: board.color,
         key: process.env.KEY,
         token: process.env.TOKEN
       })
@@ -88,17 +105,16 @@ async function createBoardInTrello(newBoard){
       return response.data.id
 }
 
-async function updateBoardInTrello(newBoard){
-    const url = process.env.URL
-    const response = await axios.post(`${url}/1/boards`, {
-        name: newBoard.name,
-        desc: newBoard.description,
-        prefs_background: newBoard.color,
-        key: process.env.KEY,
-        token: process.env.TOKEN
-      })
-      console.log(response)
-      return response.data.id
+function addBoardToFile(boards, board, boardTrelloId, fileName, fileExtension){
+    const newBoard = {
+        id: boardTrelloId,
+        name: board.name,
+        desc: board.desc,
+        color: board.color,
+        createAt: getDateNow()
+      }
+      const newBoards = JSON.stringify([...boards, newBoard], null, 4)
+      fs.writeFileSync(`./databases/${fileName}.${fileExtension}`, newBoards)
 }
 
 async function deleteBoardFromTrelloById(id){
