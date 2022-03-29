@@ -55,6 +55,11 @@ router.put('/:id', authUser, authRole('admin'), async (req, res) => {
     
         const oldBoard = getBoardById(id)
         const newBoard = {... oldBoard, ...board}
+
+        const { error } = validateBoard(newBoard)
+        if(error)
+            throw new Error(error.details[0].message)
+
         await updateBoardInTrello(id, newBoard)
         await updateBoardInFile(id, newBoard)
 
