@@ -7,3 +7,7 @@ const validateCard = boardData => {
     })
     return schema.validate(boardData)
 }
+
+module.exports = { 
+    validateCard
+}
