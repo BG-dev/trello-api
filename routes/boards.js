@@ -36,7 +36,7 @@ router.post('/', authUser, authRole('admin'), async (req, res) => {
         const { error } = validateBoard(req.body.board)
         if(error)
             throw new Error(error.details[0].message)
-        
+
         const id = await createBoardInTrello(board)
         await addBoardToFile(boards, board, id, FILE_NAME, FILE_EXTENSION)
     
@@ -52,16 +52,16 @@ router.put('/:id', authUser, authRole('admin'), async (req, res) => {
         const board = req.body.board
         if(!board || !id)
             throw new Error('data is undefined')
-    
+
         const oldBoard = getBoardById(id)
-        const newBoard = {... oldBoard, ...board}
+        const newBoard = { ...oldBoard, ...board }
 
         const { error } = validateBoard(newBoard)
         if(error)
             throw new Error(error.details[0].message)
 
-        await updateBoardInTrello(id, newBoard)
-        await updateBoardInFile(id, newBoard)
+        await updateBoardInTrello(newBoard)
+        await updateBoardInFile(newBoard)
 
         res.status(200).send({message: 'Board successfully updated in the database'})   
     } catch (error) {
@@ -101,7 +101,7 @@ async function createBoardInTrello(board){
     const url = process.env.URL
     const response = await axios.post(`${url}/1/boards`, {
         name: board.name,
-        desc: board.description,
+        desc: board.desc,
         prefs_background: board.color,
         key: process.env.KEY,
         token: process.env.TOKEN
@@ -110,31 +110,28 @@ async function createBoardInTrello(board){
       return response.data.id
 }
 
-async function updateBoardInTrello(id, newBoard){
-    if(!id || !newBoard)
+async function updateBoardInTrello(newBoard){
+    if(!newBoard)
         throw new Error('data is undefined')
 
+    const id = newBoard.id
     const url = process.env.URL
     await axios.put(`${url}/1/boards/${id}?prefs/background=${newBoard.color}`, {
         name: newBoard.name,
-        desc: newBoard.description,
+        desc: newBoard.desc,
         key: process.env.KEY,
         token: process.env.TOKEN
       })
 }
 
-async function updateBoardInFile(id, newBoard){
-    if(!id || !newBoard)
+async function updateBoardInFile(newBoard){
+    if(!newBoard)
         throw new Error('data is undefined')
 
-    const updatedBoards = boards.map(board => {
-        if(board.id === id){
-            board = newBoard
-        }
-    })
-
+    const updatedBoards = boards.map(board => board.id === newBoard.id ? newBoard : board)
+    
     const jsonBoards = JSON.stringify(updatedBoards, null, 4)
-      fs.writeFileSync('./databases/boards.json', jsonBoards)
+    fs.writeFileSync('./databases/boards.json', jsonBoards)
 }
 
 function addBoardToFile(boards, board, boardTrelloId, fileName, fileExtension){
