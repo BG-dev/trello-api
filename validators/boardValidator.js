@@ -7,7 +7,7 @@ const validateBoard = boardData => {
         id: Joi.string().label("Id"),
         name: Joi.string().min(3).max(16384).required().label("Name"),
         desc: Joi.string().min(3).max(16384).required().label("Description"),
-        color: Joi.string().valid(...colors) .required().label("Color"),
+        color: Joi.string().valid(...colors).required().label("Color"),
         createAt: Joi.any().label('Create at')
     })
     return schema.validate(boardData)
