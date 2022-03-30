@@ -5,5 +5,12 @@
         "desc": "Hi, developers!",
         "color": "pink",
         "createAt": "30.3.2022, 12:20:4"
+    },
+    {
+        "id": "624428a6b944b56fc3f43eee",
+        "name": "My first board today",
+        "desc": "Hi, developers!",
+        "color": "pink",
+        "createAt": "30.3.2022, 12:53:42"
     }
 ]

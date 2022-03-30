@@ -106,7 +106,6 @@ async function createBoardInTrello(board){
         key: process.env.KEY,
         token: process.env.TOKEN
       })
-
       return response.data.id
 }
 
