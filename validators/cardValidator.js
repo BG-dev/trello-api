@@ -5,7 +5,7 @@ const statuses = ['To Do', 'Doing', 'Done']
 const validateCard = cardData => {
     const schema = Joi.object({
         id: Joi.string().label("Id"),
-        boardId: Joi.string().label("Board id"),
+        boardId: Joi.string().required().label("Board id"),
         listId: Joi.string().label("List id"),
         name: Joi.string().min(3).max(16384).required().label("Name"),
         desc: Joi.string().min(3).max(16384).required().label("Description"),
