@@ -1,7 +1,7 @@
 const axios = require("axios");
 const express = require("express"); 
 const { authUser, authRole } = require('../auth')
-const boards = require('../databases/cards.json')
+const cards = require('../databases/cards.json')
 const { validateCard } = require('../validators/cardValidator')
 const fs = require('fs');
 
@@ -23,8 +23,8 @@ router.post('/', authUser, authRole('admin'), async (req, res) => {
         const lists = await getBoardListsById(card.boardId);
         const listId = getListIdByStatus(card.status, lists)
         card.listId = listId
-        await createCardInTrello(card)
-        // await addBoardToFile(boards, board, id, FILE_NAME, FILE_EXTENSION)
+        const newCard = await createCardInTrello(card)
+        await addCardToFile(newCard, FILE_NAME, FILE_EXTENSION)
     
         res.status(200).send({message: 'Card successfully added to the database'})   
     } catch (error) {
@@ -41,7 +41,6 @@ const getDateNow = () => {
 async function createCardInTrello(card){
     if(!card)
         throw new Error('New card data is undefined')
-console.log(card)
     const url = process.env.URL
     const response = await axios.post(`${url}/1/cards`, {
         idList: card.listId,
@@ -53,6 +52,18 @@ console.log(card)
     })
     
     return { id: response.data.id, ...card}
+}
+
+function addCardToFile(card, fileName, fileExtension){
+    if(!card || !fileName || !fileExtension)
+        throw new Error('New card data is undefined')
+
+    const newCard = {
+        ...card,
+        createAt: getDateNow()
+      }
+      const newCards = JSON.stringify([...cards, newCard], null, 4)
+      fs.writeFileSync(`./databases/${fileName}.${fileExtension}`, newCards)
 }
 
 async function getBoardListsById(boardId){
