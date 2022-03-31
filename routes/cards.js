@@ -32,6 +32,22 @@ router.post('/', authUser, authRole('admin'), async (req, res) => {
     }  
 })
 
+router.delete('/:id', authUser, authRole('admin'), async (req, res) => {
+    try {
+        const id = req.params.id
+        if(!id)
+            throw new Error('id is undefined')
+    
+        await deleteCardFromTrelloById(id)
+
+        await deleteCardFromFileById(id)
+        
+        res.status(200).send({message: 'Cards has been deleted!'})    
+    } catch (error) {
+        res.status(400).send({message: `${error}`})
+    }
+})
+
 const getDateNow = () => {
     const time = new Date()
     return `${time.getDate()}.${time.getMonth()+1}.${time.getFullYear()}, ` 
@@ -64,6 +80,26 @@ function addCardToFile(card, fileName, fileExtension){
       }
       const newCards = JSON.stringify([...cards, newCard], null, 4)
       fs.writeFileSync(`./databases/${fileName}.${fileExtension}`, newCards)
+}
+
+async function deleteCardFromTrelloById(id){
+    if(!id)
+        throw new Error('id is undefined')
+
+    const url = process.env.URL
+    const key = process.env.KEY
+    const token = process.env.TOKEN
+    await axios.delete(`${url}/1/cards/${id}?key=${key}&token=${token}`)
+}
+
+async function deleteCardFromFileById(id){
+    if(!id)
+        throw new Error('id is undefined')
+
+    const updatedCards = cards.filter(card => card.id !== id)
+
+    const jsonCards = JSON.stringify(updatedCards, null, 4)
+    await fs.writeFileSync('./databases/cards.json', jsonCards)
 }
 
 async function getBoardListsById(boardId){
