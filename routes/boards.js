@@ -6,8 +6,9 @@ const cards = require('../databases/cards.json')
 const { validateBoard } = require('../validators/boardValidator')
 const fs = require('fs');
 
-const FILE_NAME = 'boards'
-const FILE_EXTENSION = 'json'
+const BOARDS_FILE = 'boards.json'
+const CARDS_FILE = 'cards.json'
+
 
 const router = express.Router()
 
@@ -30,15 +31,15 @@ router.get('/:id', authUser, (req, res) => {
 
 router.post('/', authUser, authRole('admin'), async (req, res) => {
     try {
-        const board = req.body.board
-        if(!board)
-            throw new Error('board is undefined')
+        const boardData = req.body.board
+        if(!boardData)
+            throw new Error('board data is undefined')
 
-        const { error } = validateBoard(req.body.board)
+        const { error } = validateBoard(boardData)
         if(error)
             throw new Error(error.details[0].message)
 
-        const id = await createBoardInTrello(board)
+        const board = await createBoardInTrello(boardData)
         await addBoardToFile(boards, board, id, FILE_NAME, FILE_EXTENSION)
     
         res.status(200).send({message: 'Board successfully added to the database'})   
@@ -97,7 +98,7 @@ const getDateNow = () => {
 
 const getBoardById = (id) => boards.find(board => board.id === id)
 
-async function createBoardInTrello(board){
+async function createBoardInTrello(boardData){
     if(!board)
         throw new Error('New board data is undefined')
 
