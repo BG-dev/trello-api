@@ -2,6 +2,7 @@ const axios = require("axios");
 const express = require("express"); 
 const { authUser, authRole } = require('../auth')
 const boards = require('../databases/boards.json')
+const cards = require('../databases/cards.json')
 const { validateBoard } = require('../validators/boardValidator')
 const fs = require('fs');
 
@@ -79,6 +80,8 @@ router.delete('/:id', authUser, authRole('admin'), async (req, res) => {
         await deleteBoardFromTrelloById(id)
 
         await deleteBoardFromFileById(id)
+
+        await deleteBoardCardsFromFileById(id)
         
         res.status(200).send({message: 'Board has been deleted!'})    
     } catch (error) {
@@ -166,6 +169,16 @@ async function deleteBoardFromFileById(id){
 
     const jsonBoards = JSON.stringify(updatedBoards, null, 4)
     await fs.writeFileSync('./databases/boards.json', jsonBoards)
+}
+
+async function deleteBoardCardsFromFileById(id){
+    if(!id)
+        throw new Error('id is undefined')
+
+    const updatedCards = cards.filter(card => card.boardId !== id)
+
+    const jsonCards = JSON.stringify(updatedCards, null, 4)
+    await fs.writeFileSync('./databases/cards.json', jsonCards)
 }
 
 module.exports = router

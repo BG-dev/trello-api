@@ -5,12 +5,5 @@
         "desc": "Hi, developers!",
         "color": "pink",
         "createAt": "1.4.2022, 15:3:48"
-    },
-    {
-        "id": "6246ea2f23d0858c9c86b9cb",
-        "name": "Second board",
-        "desc": "Hi, developers!",
-        "color": "green",
-        "createAt": "1.4.2022, 15:3:59"
     }
 ]
