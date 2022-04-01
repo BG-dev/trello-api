@@ -1,16 +1,16 @@
 [
     {
-        "id": "6246af267bd57202f9636057",
-        "name": "first board",
-        "desc": "Hi, Den!",
-        "color": "green",
-        "createAt": "1.4.2022, 10:52:7"
+        "id": "6246ea24f652a17f0a76bfad",
+        "name": "First board",
+        "desc": "Hi, developers!",
+        "color": "pink",
+        "createAt": "1.4.2022, 15:3:48"
     },
     {
-        "id": "6246af341f2cc08da5cc3926",
-        "name": "first second",
-        "desc": "Hi, Den!",
-        "color": "sky",
-        "createAt": "1.4.2022, 10:52:20"
+        "id": "6246ea2f23d0858c9c86b9cb",
+        "name": "Second board",
+        "desc": "Hi, developers!",
+        "color": "green",
+        "createAt": "1.4.2022, 15:3:59"
     }
 ]

@@ -65,7 +65,6 @@ router.delete('/:id', authUser, authRole('admin'), async (req, res) => {
             throw new Error('id is undefined')
     
         await deleteCardFromTrelloById(id)
-
         await deleteCardFromFileById(id)
         
         res.status(200).send({message: 'Cards has been deleted!'})    
@@ -148,18 +147,18 @@ async function updateCardInTrello(newCard){
     if(!newCard)
         throw new Error('data is undefined')
 
-    console.log(newCard)
     const id = newCard.id
     const url = process.env.URL
     await axios.put(`${url}/1/cards/${id}`, {
-        listId: newCard.listId,
-        boardId: newCard.boardId,
+        idList: newCard.listId,
+        idBoard: newCard.boardId,
         key: process.env.KEY,
         token: process.env.TOKEN,
         name: newCard.name,
         desc: newCard.desc,
         due: newCard.dueDate
       })
+
 }
 
 async function updateCardInFile(newCard){
