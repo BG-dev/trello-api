@@ -1,16 +1,16 @@
 [
     {
-        "id": "624420c4f626f42b44b1c1a9",
-        "name": "Anton",
-        "desc": "Hi, N!",
-        "color": "orange",
-        "createAt": "30.3.2022, 12:20:4"
+        "id": "6246af267bd57202f9636057",
+        "name": "first board",
+        "desc": "Hi, Den!",
+        "color": "green",
+        "createAt": "1.4.2022, 10:52:7"
     },
     {
-        "id": "624428a6b944b56fc3f43eee",
-        "name": "My first board today",
-        "desc": "Hi, developers!",
-        "color": "pink",
-        "createAt": "30.3.2022, 12:53:42"
+        "id": "6246af341f2cc08da5cc3926",
+        "name": "first second",
+        "desc": "Hi, Den!",
+        "color": "sky",
+        "createAt": "1.4.2022, 10:52:20"
     }
 ]

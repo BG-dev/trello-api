@@ -32,6 +32,32 @@ router.post('/', authUser, authRole('admin'), async (req, res) => {
     }  
 })
 
+router.put('/:id', authUser, authRole('admin'), async (req, res) => {
+    try {
+        const id = req.params.id
+        const card = req.body.card
+        if(!card || !id)
+            throw new Error('data is undefined')
+
+        const oldCard = getCardById(id)
+        const newCard = { ...oldCard, ...card }
+        const lists = await getBoardListsById(newCard.boardId);
+        const listId = getListIdByStatus(newCard.status, lists)
+        newCard.listId = listId
+        const { error } = validateCard(newCard)
+        if(error)
+            throw new Error(error.details[0].message)
+
+        await updateCardInTrello(newCard)
+        await updateCardInFile(newCard)
+
+        res.status(200).send({message: 'Card successfully updated in the database'})   
+    } catch (error) {
+        res.status(400).send({message: `${error}`})
+    }
+
+})
+
 router.delete('/:id', authUser, authRole('admin'), async (req, res) => {
     try {
         const id = req.params.id
@@ -92,6 +118,8 @@ async function deleteCardFromTrelloById(id){
     await axios.delete(`${url}/1/cards/${id}?key=${key}&token=${token}`)
 }
 
+const getCardById = (id) => cards.find(card => card.id === id)
+
 async function deleteCardFromFileById(id){
     if(!id)
         throw new Error('id is undefined')
@@ -114,6 +142,34 @@ async function getBoardListsById(boardId){
         }
       })
     return response.data
+}
+
+async function updateCardInTrello(newCard){
+    if(!newCard)
+        throw new Error('data is undefined')
+
+    console.log(newCard)
+    const id = newCard.id
+    const url = process.env.URL
+    await axios.put(`${url}/1/cards/${id}`, {
+        listId: newCard.listId,
+        boardId: newCard.boardId,
+        key: process.env.KEY,
+        token: process.env.TOKEN,
+        name: newCard.name,
+        desc: newCard.desc,
+        due: newCard.dueDate
+      })
+}
+
+async function updateCardInFile(newCard){
+    if(!newCard)
+        throw new Error('data is undefined')
+
+    const updatedCards = cards.map(card => card.id === newCard.id ? newCard : card)
+    
+    const jsonCards = JSON.stringify(updatedCards, null, 4)
+    fs.writeFileSync('./databases/cards.json', jsonCards)
 }
 
 getListIdByStatus = (status, lists) => lists.find(list => list.name === status).id
