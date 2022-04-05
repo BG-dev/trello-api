@@ -1,10 +1,10 @@
 const express = require('express')
 const dotenv = require('dotenv')
 const bodyparser = require('body-parser')
-const usersRoutes = require('./routes/users.js')
-const loginRoutes = require('./routes/login.js')
-const boardsRoutes = require('./routes/boards.js')
-const cardsRoutes = require('./routes/cards.js')
+const usersRoutes = require('./routes/users')
+const loginRoutes = require('./routes/login')
+const boardsRoutes = require('./routes/boards')
+const cardsRoutes = require('./routes/cards')
 
 dotenv.config();
 

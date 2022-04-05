@@ -1,6 +1,6 @@
 const express = require("express"); 
-const users = require('../databases/users.json')
-const validateUser = require('../validators/userValidator')
+const users = require('../../integration/databases/users.json')
+const validateUser = require('../../service/validators/userValidator')
 
 const router = express.Router()
 

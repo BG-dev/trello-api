@@ -1,8 +1,8 @@
 const axios = require("axios");
 const express = require("express"); 
-const { authUser, authRole } = require('../auth')
-const cards = require('../databases/cards.json')
-const { validateCard } = require('../validators/cardValidator')
+const { authUser, authRole } = require('../../auth')
+const cards = require('../../integration/databases/cards.json')
+const { validateCard } = require('../../service/validators/cardValidator')
 const fs = require('fs');
 
 const FILE_NAME = 'cards'
