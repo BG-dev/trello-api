@@ -1,5 +1,5 @@
 const express = require("express"); 
-const { authUser, authRole } = require('../../auth')
+const { authUser, authRole } = require('../../service/auth')
 const { addBoard, updateBoard, deleteBoard } = require('../../service/boardService')
 
 const router = express.Router()
