@@ -1,8 +1,7 @@
 const { createCardInTrello, updateCardInTrello, deleteCardFromTrello, getBoardListsById } = require('../integration/cardIntegration')
 const { replaceArrayElementById, getElementFromArrayById, deleteElementFromArrayById} = require('./arrayService')
 const { validateCard } = require('./validators/cardValidator')
-const { parseDataToJson } = require('./parser')
-const { writeDateToFile } = require('../integration/files')
+const { writeDataToJsonFile } = require('./commandHelper')
 const cards = require('../integration/databases/cards.json')
 
 const CARDS_FILE = 'cards.json'
@@ -42,8 +41,7 @@ function addCardToFile(card){
         throw new Error('Card data is undefined')
 
       const updatedCards = [...cards, card]
-      const jsonCards = parseDataToJson(updatedCards)
-      writeDateToFile(jsonCards, CARDS_FILE)
+      writeDataToJsonFile(updatedCards, CARDS_FILE)
 }
 
 async function updateCardInFile(updatedCard){
@@ -51,8 +49,7 @@ async function updateCardInFile(updatedCard){
         throw new Error('data is undefined')
 
     const updatedCards = replaceArrayElementById(cards, updatedCard)
-    const jsonCards = parseDataToJson(updatedCards)
-    writeDateToFile(jsonCards, CARDS_FILE)
+    writeDataToJsonFile(updatedCards, CARDS_FILE)
 }
 
 async function deleteCardFromFile(cardId){
@@ -60,8 +57,7 @@ async function deleteCardFromFile(cardId){
         throw new Error('id is undefined')
 
     const updatedCards = deleteElementFromArrayById(cards, cardId)
-    const jsonCards = parseDataToJson(updatedCards)
-    writeDateToFile(jsonCards, CARDS_FILE)
+    writeDataToJsonFile(updatedCards, CARDS_FILE)
 }
 
 const getListIdByStatus = (status, lists) => lists.find(list => list.name === status).id

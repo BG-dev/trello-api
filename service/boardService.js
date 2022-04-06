@@ -1,8 +1,7 @@
 const { validateBoard } = require('./validators/boardValidator')
 const { createBoardInTrello, updateBoardInTrello, deleteBoardFromTrello } = require('../integration/boardIntegration')
 const { replaceArrayElementById, getElementFromArrayById, deleteElementFromArrayById} = require('./arrayService')
-const { parseDataToJson } = require('./parser')
-const { writeDateToFile } = require('../integration/files')
+const { writeDataToJsonFile } = require('./commandHelper')
 const boards = require('../integration/databases/boards.json')
 const cards = require('../integration/databases/cards.json')
 
@@ -41,8 +40,7 @@ function addBoardToFile(board){
         throw new Error('Board is undefined')
     
     const updatedBoards = [...boards, board]
-    jsonBoards = parseDataToJson(updatedBoards)
-    writeDateToFile(jsonBoards, BOARDS_FILE)
+    writeDataToJsonFile(updatedBoards, BOARDS_FILE)
 }
 
 function updateBoardInFile(board){
@@ -50,8 +48,7 @@ function updateBoardInFile(board){
         throw new Error('Board is undefined')
 
     const updatedBoards = replaceArrayElementById(boards, board)
-    jsonBoards = parseDataToJson(updatedBoards)
-    writeDateToFile(jsonBoards, BOARDS_FILE)
+    writeDataToJsonFile(updatedBoards, BOARDS_FILE)
 }
 
 async function deleteBoardFromFile(boardId){
@@ -59,9 +56,7 @@ async function deleteBoardFromFile(boardId){
         throw new Error('id is undefined')
 
     const updatedBoards = deleteElementFromArrayById(boards, boardId)
-
-    const jsonBoards = parseDataToJson(updatedBoards)
-    writeDateToFile(jsonBoards, BOARDS_FILE)
+    writeDataToJsonFile(updatedBoards, BOARDS_FILE)
 }
 
 async function deleteBoardCardsFromFile(boardId){
@@ -69,9 +64,7 @@ async function deleteBoardCardsFromFile(boardId){
         throw new Error('id is undefined')
 
     const updatedCards = cards.filter(card => card.boardId !== boardId)
-
-    const jsonCards = parseDataToJson(updatedCards)
-    writeDateToFile(jsonCards, CARDS_FILE)
+    writeDataToJsonFile(updatedCards, CARDS_FILE)
 }
 
 module.exports = {
