@@ -40,7 +40,7 @@ function addBoardToFile(board){
     if(!board)
         throw new Error('Board is undefined')
     
-    updatedBoards = [...boards, board]
+    const updatedBoards = [...boards, board]
     jsonBoards = parseDataToJson(updatedBoards)
     writeDateToFile(jsonBoards, BOARDS_FILE)
 }
