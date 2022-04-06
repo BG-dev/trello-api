@@ -1,5 +1,6 @@
 const express = require('express')
 const dotenv = require('dotenv')
+const helmet = require("helmet");
 const bodyparser = require('body-parser')
 const usersRoutes = require('./routes/users')
 const loginRoutes = require('./routes/login')
@@ -13,6 +14,7 @@ const port = process.env.PORT || 8000
 
 app.use(bodyparser.urlencoded({extended:false}))
 app.use(bodyparser.json())
+app.use(helmet());
 
 app.use('/users', usersRoutes)
 app.use('/login', loginRoutes)
