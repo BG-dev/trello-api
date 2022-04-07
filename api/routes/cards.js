@@ -1,5 +1,5 @@
 const express = require("express"); 
-const { authUser, authRole } = require('../../service/auth')
+const { authUser, authRole } = require('../middlewares/auth')
 const { addCard, updateCard, deleteCard } = require('../../service/cardService')
 
 const router = express.Router()
