@@ -4,7 +4,7 @@ const { addBoard, updateBoard, deleteBoard } = require('../../service/boardServi
 
 const router = express.Router()
 
-router.post('/', authUser, authRole('admin'), async (req, res) => {
+router.post('/', authUser, authRole('admin'), async (req, res, next) => {
     try {
         const boardData = req.body.board
         if(!boardData)
@@ -13,7 +13,7 @@ router.post('/', authUser, authRole('admin'), async (req, res) => {
         await addBoard(boardData)
         res.status(200).send({message: 'Board successfully added to the database'})   
     } catch (error) {
-        res.status(400).send({message: `${error}`})
+        next(error)
     }  
 })
 
@@ -27,7 +27,7 @@ router.put('/:id', authUser, authRole('admin'), async (req, res) => {
         await updateBoard(id, board)
         res.status(200).send({message: 'Board successfully updated in the database'})   
     } catch (error) {
-        res.status(400).send({message: `${error}`})
+        next(error)
     }
 
 })
@@ -41,7 +41,7 @@ router.delete('/:id', authUser, authRole('admin'), async (req, res) => {
         deleteBoard(id)
         res.status(200).send({message: 'Board has been deleted!'})    
     } catch (error) {
-        res.status(400).send({message: `${error}`})
+        next(error)
     }
 })
 

@@ -13,7 +13,7 @@ router.post('/', authUser, authRole('admin'), async (req, res) => {
         await addCard(cardData)
         res.status(200).send({message: 'Card successfully added to the database'})   
     } catch (error) {
-        res.status(400).send({message: `${error}`})
+        next(error)
     }  
 })
 
@@ -27,7 +27,7 @@ router.put('/:id', authUser, authRole('admin'), async (req, res) => {
         await updateCard(id, card)
         res.status(200).send({message: 'Card successfully updated in the database'})   
     } catch (error) {
-        res.status(400).send({message: `${error}`})
+        next(error)
     }
 
 })
@@ -41,7 +41,7 @@ router.delete('/:id', authUser, authRole('admin'), async (req, res) => {
         await deleteCard(id)
         res.status(200).send({message: 'Cards has been deleted!'})    
     } catch (error) {
-        res.status(400).send({message: `${error}`})
+        next(error)
     }
 })
 
